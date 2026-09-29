@@ -174,7 +174,14 @@ def run_multi_agent_pipeline(query: str, depth: float = 2740.0, lat: float = 27.
         "target_entry_md": barail_top_md,
         "look_ahead_distance_m": max(0.0, dist_to_barail),
         "structural_dip": "+35m structural up-dip towards NE relative to Well B-04",
-        "lithology_summary": "Massive porous sands with alternating carbonaceous shales. Depleted reservoir pressure (1.05 SG eq)."
+        "lithology_summary": "Massive porous sands with alternating carbonaceous shales. Depleted reservoir pressure (1.05 SG eq).",
+        "stratigraphic_column": [
+            {"formation": "Alluvium / Dihing", "top_md": 0, "base_md": 350, "lithology": "Unconsolidated sands, coarse gravels", "color": "#fef08a", "hazard": "None (Surface cased 20\")"},
+            {"formation": "Dhekiajuli / Girujan Clay", "top_md": 350, "base_md": 1200, "lithology": "Mottled claystone, swelling shale", "color": "#cbd5e1", "hazard": "Bit balling, washouts (13-3/8\" shoe @ 1140m)"},
+            {"formation": "Tipam Sandstone Member", "top_md": 1200, "base_md": 2750, "lithology": "Massive medium-grained sands", "color": "#fde047", "hazard": "Normal pressure fairway (9-5/8\" shoe @ 2750m)"},
+            {"formation": "Barail Arenaceous Sand", "top_md": 2815, "base_md": 2980, "lithology": "Depleted reservoir sand, coal streaks", "color": "#f59e0b", "hazard": "Severe Lost Circulation (88% risk @ 2850m)"},
+            {"formation": "Kopili Marine Shale", "top_md": 2980, "base_md": 3450, "lithology": "Overpressured dark marine shale", "color": "#64748b", "hazard": "Abnormal Gas Kicks (SIDPP 340 psi @ 3000m)"}
+        ]
     }
 
     # 2. LithoGuard Agent
@@ -220,6 +227,52 @@ def run_multi_agent_pipeline(query: str, depth: float = 2740.0, lat: float = 27.
             {"well": "Active Well A-01", "shoe_depth": "2750m MD", "formation_seated": "Tipam base", "notes": "Leaves 65m open hole to Barail top"},
             {"well": "Offset B-04", "shoe_depth": "2760m MD", "formation_seated": "Tipam base", "notes": "Exposed 90m before 2850m loss zone"},
             {"well": "Offset C-12", "shoe_depth": "2810m MD", "formation_seated": "Upper Barail", "notes": "Higher shoe depth, tight clearance"}
+        ],
+        "cementing_comparison": [
+            {
+                "well": "Active Well A-01",
+                "lead_slurry": "1.58 SG Pozzolan / Class G",
+                "tail_slurry": "1.90 SG Class G + 0.3% Retarder",
+                "toc_planned_m": "Surface (0m)",
+                "toc_verified_m": "Surface (CBL Verified)",
+                "woc_hrs": 24.0,
+                "compressive_strength_24h_psi": 2650,
+                "cbl_quality": "EXCELLENT (98% Bond Across Shoe)",
+                "gas_migration_control": "Gas-tight micro-silica latex added"
+            },
+            {
+                "well": "Offset B-04",
+                "lead_slurry": "1.55 SG Extended Slurry",
+                "tail_slurry": "1.88 SG Class G",
+                "toc_planned_m": "Surface",
+                "toc_verified_m": "120m (Channeling in Tipam)",
+                "woc_hrs": 24.0,
+                "compressive_strength_24h_psi": 2200,
+                "cbl_quality": "MODERATE (Microannulus detected)",
+                "gas_migration_control": "Standard fluid loss additives"
+            },
+            {
+                "well": "Offset C-12",
+                "lead_slurry": "1.60 SG Class G",
+                "tail_slurry": "1.90 SG High Early Strength",
+                "toc_planned_m": "Surface",
+                "toc_verified_m": "45m (Good isolation)",
+                "woc_hrs": 26.0,
+                "compressive_strength_24h_psi": 2800,
+                "cbl_quality": "EXCELLENT (95% Isolation)",
+                "gas_migration_control": "Anti-gas channeling polymer"
+            },
+            {
+                "well": "Offset D-08",
+                "lead_slurry": "1.62 SG Heavy Lead",
+                "tail_slurry": "1.92 SG Barite Slurry",
+                "toc_planned_m": "Surface",
+                "toc_verified_m": "Surface (Good shoe bond)",
+                "woc_hrs": 30.0,
+                "compressive_strength_24h_psi": 3100,
+                "cbl_quality": "EXCELLENT (Kopili gas sealed)",
+                "gas_migration_control": "Gas-tight surfactant + Micro-silica"
+            }
         ],
         "cement_slurry": "Gas-tight micro-silica slurry, 1.58 SG density, pumped to surface with 150 psi surface casing pressure margin."
     }
