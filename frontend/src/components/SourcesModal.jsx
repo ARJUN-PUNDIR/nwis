@@ -107,10 +107,10 @@ export default function SourcesModal({ isOpen = true, onClose, onSelectSource })
   ];
 
   const categories = [
-    { id: 'all', label: 'All Project Sources (8)', icon: '📚' },
+    { id: 'all', label: 'All Sources (8)', icon: '📚' },
     { id: 'realtime', label: 'Live eRTMAC Stream', icon: '⚡' },
-    { id: 'wcr', label: 'Well Completion Reports (WCR)', icon: '📜' },
-    { id: 'ddr', label: 'Daily Drilling Reports (DDR)', icon: '📋' },
+    { id: 'wcr', label: 'Well Completion (WCR)', icon: '📜' },
+    { id: 'ddr', label: 'Daily Drilling (DDR)', icon: '📋' },
     { id: 'standards', label: 'DGH / OISD Standards', icon: '🏛️' },
     { id: 'geology', label: 'Stratigraphic Atlas', icon: '🌍' }
   ];
@@ -164,29 +164,58 @@ export default function SourcesModal({ isOpen = true, onClose, onSelectSource })
           />
         </div>
 
-        {/* Category Pills */}
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
-          {categories.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveCategory(c.id)}
-              style={{
-                padding: '4px 10px',
-                borderRadius: '9999px',
-                border: activeCategory === c.id ? '1px solid var(--active-blue)' : '1px solid var(--border-subtle)',
-                background: activeCategory === c.id ? 'var(--active-blue)' : '#f8fafc',
-                color: activeCategory === c.id ? '#ffffff' : 'var(--text-body)',
-                fontSize: '0.74rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <span style={{ marginRight: '4px' }}>{c.icon}</span>
-              <span>{c.label}</span>
-            </button>
-          ))}
+        {/* Category Pills with proper wrapping and flex alignment */}
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '8px', 
+          marginTop: '0.5rem', 
+          marginBottom: '0.25rem' 
+        }}>
+          {categories.map((c) => {
+            const isActive = activeCategory === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setActiveCategory(c.id)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  height: '32px',
+                  padding: '0 12px',
+                  borderRadius: '9999px',
+                  border: isActive ? '1px solid var(--active-blue)' : '1px solid var(--border-medium)',
+                  background: isActive ? 'var(--active-blue)' : '#ffffff',
+                  color: isActive ? '#ffffff' : 'var(--text-body)',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  boxSizing: 'border-box',
+                  boxShadow: isActive ? '0 1px 3px rgba(2, 132, 199, 0.25)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.borderColor = 'var(--active-blue)';
+                    e.currentTarget.style.background = '#f0f9ff';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.borderColor = 'var(--border-medium)';
+                    e.currentTarget.style.background = '#ffffff';
+                  }
+                }}
+              >
+                <span style={{ fontSize: '0.85rem', lineHeight: 1 }}>{c.icon}</span>
+                <span style={{ lineHeight: 1 }}>{c.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Sources Grid */}
