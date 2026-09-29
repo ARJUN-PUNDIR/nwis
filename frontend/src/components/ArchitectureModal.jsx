@@ -56,7 +56,7 @@ export default function ArchitectureModal({ isOpen = true, onClose }) {
       outputs: "NPT avoidance ledger, monetary savings metric, pre-spud look-ahead checklist."
     },
     nemotron: {
-      title: "Node 7: NemotronSynthesisNode (NVIDIA Nemotron-3 Ultra 550B)",
+      title: "Node 7: LLMSynthesisNode (LLM)",
       role: "Deterministic AI Reasoning Engine",
       latency: "340ms",
       inputs: "Multi-agent structured state, institutional memory, system prompt with negative constraints.",
@@ -81,7 +81,7 @@ export default function ArchitectureModal({ isOpen = true, onClose }) {
                 ⚡ Multi-Agent StateGraph Architecture (7 Nodes, Synchronized Swarm)
               </h2>
               <p className="modal-sub" style={{ margin: 0, fontSize: '0.76rem' }}>
-                Oil India Limited NWIS Decision-Support Engine • Powered by NVIDIA Nemotron-3 Ultra 550B
+                Oil India Limited NWIS Decision-Support Engine • Powered by Enterprise Drilling LLM (LLM)
               </p>
             </div>
           </div>
@@ -183,11 +183,11 @@ export default function ArchitectureModal({ isOpen = true, onClose }) {
             <path d="M 470 152 C 495 152, 490 111, 515 111" stroke="#38bdf8" strokeWidth="1.5" fill="none"/>
             <path d="M 470 194 C 495 194, 490 111, 515 111" stroke="#c084fc" strokeWidth="1.5" fill="none" markerEnd="url(#arr-purple)"/>
 
-            {/* Node 7: Nemotron Synthesis */}
+            {/* Node 7: LLM Synthesis */}
             <g onClick={() => setSelectedNode("nemotron")} style={{ cursor: 'pointer' }}>
               <rect x="525" y="85" width="145" height="52" rx="8" fill={selectedNode === "nemotron" ? "#4c1d95" : "#1e1b4b"} stroke="#a855f7" strokeWidth={selectedNode === "nemotron" ? 2.5 : 1.5}/>
-              <text x="597" y="105" fill="#faf5ff" fontSize="11" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">7. Nemotron-3 Ultra</text>
-              <text x="597" y="121" fill="#d8b4fe" fontSize="8.5" textAnchor="middle" fontFamily="sans-serif">550B Synthesis (340ms)</text>
+              <text x="597" y="105" fill="#faf5ff" fontSize="11" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">7. Synthesis (LLM)</text>
+              <text x="597" y="121" fill="#d8b4fe" fontSize="8.5" textAnchor="middle" fontFamily="sans-serif">Enterprise LLM (340ms)</text>
             </g>
 
             {/* Path to Output */}
@@ -254,7 +254,7 @@ export default function ArchitectureModal({ isOpen = true, onClose }) {
             <tbody>
               <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                 <td style={{ padding: '6px 10px', fontWeight: 700, width: '22%', background: '#f8fafc', color: 'var(--text-muted)' }}>Core Foundation Model</td>
-                <td style={{ padding: '6px 10px', color: 'var(--text-body)', fontFamily: 'monospace' }}>NVIDIA Nemotron-3 Ultra (nvidia/nemotron-3-ultra-550b-a55b)</td>
+                <td style={{ padding: '6px 10px', color: 'var(--text-body)', fontFamily: 'monospace' }}>Enterprise Drilling LLM (LLM)</td>
                 <td style={{ padding: '6px 10px', fontWeight: 700, width: '20%', background: '#f8fafc', color: 'var(--text-muted)' }}>Spatial Geodesic Engine</td>
                 <td style={{ padding: '6px 10px', color: 'var(--text-body)' }}>Haversine 5.0 km Radial Filter</td>
               </tr>

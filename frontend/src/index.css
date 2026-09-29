@@ -1,7 +1,7 @@
 /* ==========================================================================
    OIL INDIA LIMITED - NWIS (Nearby Wells Intelligence System)
    Clean, Minimalist AI Assistant (Antigravity / Perplexity / Claude Style)
-   Powered by NVIDIA Nemotron-3 Ultra 550B
+   Powered by Enterprise Drilling LLM
    ========================================================================== */
 
 :root {
@@ -295,6 +295,39 @@ body {
   color: var(--active-blue);
   transform: translateY(-1px);
   box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12);
+}
+
+.header-location-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: #ffffff;
+  border: 1.5px solid var(--border-medium);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.header-location-btn:hover {
+  background: #f0fdf4;
+  border-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);
+}
+
+.location-pin-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .sidebar-footer {

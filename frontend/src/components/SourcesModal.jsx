@@ -306,7 +306,7 @@ export default function SourcesModal({ isOpen = true, onClose, onSelectSource })
         {/* Modal Footer */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            All 8 data sources ground NVIDIA Nemotron-3 Ultra deterministic answers.
+            All 8 data sources ground Enterprise Drilling LLM deterministic answers.
           </span>
           <button className="btn-secondary" onClick={onClose}>
             Close Directory

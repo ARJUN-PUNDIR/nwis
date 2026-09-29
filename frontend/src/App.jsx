@@ -12,7 +12,9 @@ import {
   CheckCircle2, 
   AlertTriangle,
   Zap,
-  Database
+  Database,
+  MapPin,
+  ChevronDown
 } from 'lucide-react';
 
 import Sidebar from './components/Sidebar';
@@ -23,6 +25,7 @@ import CaseStudiesModal from './components/CaseStudiesModal';
 import WellGraphModal from './components/WellGraphModal';
 import SourcesModal from './components/SourcesModal';
 import ArchitectureModal from './components/ArchitectureModal';
+import LocationModal from './components/LocationModal';
 
 const BACKEND_URL = "http://localhost:8001";
 const STORAGE_KEY = "oil_nwis_saved_consultations_v3";
@@ -123,7 +126,7 @@ const INITIAL_DEMO_CHATS = [
             { node: "MudSmithNode", latency_ms: 16, description: "Formulated 40 bbl LCM pill recipe and specified ECD ceiling < 1.18 SG." },
             { node: "CasingProNode", latency_ms: 15, description: "Validated 9-5/8\" intermediate casing shoe at 2750m MD across sector." },
             { node: "NptSentryNode", latency_ms: 12, description: "Estimated 16.5 hrs NPT mitigation (₹38.5 Lakhs rig operating savings)." },
-            { node: "NemotronSynthesisNode", latency_ms: 340, description: "NVIDIA Nemotron-3 Ultra 550B synthesized grounded petroleum engineering briefing." }
+            { node: "LLMSynthesisNode", latency_ms: 340, description: "Enterprise Drilling LLM synthesized grounded petroleum engineering briefing." }
           ],
           citations: [
             { doc_id: "DOC-WCR-B04", title: "WCR_NHKT_B04_2021.pdf (p.42-45)", section: "Sec 3.2: Severe Lost Circulation Remediation & 40 bbl LCM Recipe", excerpt: "Severe partial-to-total loss (28.5 m3/hr) encountered in upper Barail Arenaceous member at 2850m. Mitigated by spotting 40 bbl heavy LCM pill (25 ppb Nut Plug, 20 ppb Mica, 15 ppb Safecarb) and reducing mud weight to 1.15 SG." },
@@ -233,7 +236,17 @@ export default function App() {
   const [isWellGraphOpen, setIsWellGraphOpen] = useState(false);
   const [isSourcesOpen, setIsSourcesOpen] = useState(false);
   const [isArchitectureOpen, setIsArchitectureOpen] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
+
+  // Active Rig Location & Operational Well State
+  const [activeLocation, setActiveLocation] = useState({
+    name: "Nahorkatiya South Asset (Sector B)",
+    well: "Active Well: NHKT-A01 (Rig-14)",
+    lat: 27.2850,
+    lon: 95.3210,
+    depth: 2820.0
+  });
 
   // Speech Recognition state
   const [isListening, setIsListening] = useState(false);
@@ -340,7 +353,10 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: query,
-          history: updatedMessages.map(m => ({ role: m.role, content: m.content }))
+          history: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+          latitude: activeLocation.lat,
+          longitude: activeLocation.lon,
+          current_depth: activeLocation.depth
         })
       });
 
@@ -457,30 +473,31 @@ export default function App() {
     handleSendMessage(prompt);
   };
 
+  // Easy, simple, non-jargon language starter examples as requested in Point 3
   const examplePrompts = [
     {
-      icon: "📍",
-      title: "Query Location & Current Depth",
-      prompt: "I am at Nahorkatiya South (27.285°N, 95.321°E), drilling at 2820m. What risks should I expect ahead?",
-      desc: "Resolves offset wells, lithology tops, and loss corridors ahead."
+      icon: "🔍",
+      title: "What Problems Happened Ahead?",
+      prompt: "I am currently drilling at 2820m. What drilling problems happened in nearby wells at this depth?",
+      desc: "Checks nearby offset wells to alert you of gas kicks, stuck pipe, or mud losses before you reach them."
     },
     {
-      icon: "⚠️",
-      title: "Mud Loss & Proven LCM Recipes",
-      prompt: "Show nearby mud losses and recommended LCM pill formulations in Barail formation.",
-      desc: "Historical loss rates, walnut/mica dosages, and mud weight limits."
+      icon: "🧪",
+      title: "What To Do If Mud Starts Leaking?",
+      prompt: "What should I do if drilling mud starts leaking into the ground? Give me the exact recipe to stop it.",
+      desc: "Gives you the exact mixture and mud weight to quickly seal rock cracks and stop mud loss."
     },
     {
-      icon: "⚖️",
-      title: "Casing Program Comparison",
-      prompt: "Compare casing programs between Well B-04 and active well A-01.",
-      desc: "Evaluates intermediate shoe seats and liner depths across sector."
+      icon: "📏",
+      title: "Is My Pipe Casing Depth Safe?",
+      prompt: "Compare my steel casing pipe depth with nearby offset wells to make sure it is safe.",
+      desc: "Checks if your protective steel pipe shoe is set at the right depth compared to past wells."
     },
     {
-      icon: "🚨",
-      title: "Well Control & Gas Kick History",
-      prompt: "How was the gas kick controlled in Well D-08 at 3000m depth?",
-      desc: "Pore pressure ramps, shut-in pressures, and Driller's Method kill procedure."
+      icon: "🛑",
+      title: "How Was The Past Gas Leak Stopped?",
+      prompt: "How did Well D-08 stop the dangerous high-pressure gas leak when they were at 3000m depth?",
+      desc: "Step-by-step simple explanation of how past drillers killed high gas pressure safely."
     }
   ];
 
@@ -500,19 +517,32 @@ export default function App() {
 
       {/* Main Chat Interface */}
       <main className="main-chat">
-        {/* Top Header with Upper Action Buttons like sih26 */}
+        {/* Top Header with Upper Action Buttons */}
         <header className="chat-top-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-main)' }}>
-              Nahorkatiya South Asset (Sector B)
-            </span>
-            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-              Active Well: NHKT-A01 (Rig-14)
-            </span>
-          </div>
+          {/* Interactive Rig Location Selector Button (Point 2) */}
+          <button 
+            className="header-location-btn"
+            onClick={() => setIsLocationModalOpen(true)}
+            title="Click to change rig location: current GPS, write custom location, or presets"
+          >
+            <div className="location-pin-box">
+              <MapPin size={16} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                  {activeLocation.name}
+                </span>
+                <ChevronDown size={13} style={{ color: 'var(--text-muted)' }} />
+              </div>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                {activeLocation.well} • {activeLocation.lat}°N, {activeLocation.lon}°E
+              </span>
+            </div>
+          </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            {/* 1. Sources Directory Button (sih26 style) */}
+            {/* 1. Sources Directory Button */}
             <button 
               className="header-top-btn"
               onClick={() => setIsSourcesOpen(true)}
@@ -522,7 +552,7 @@ export default function App() {
               <span>📚 Sources</span>
             </button>
 
-            {/* 2. Architecture StateGraph Button (sih26 style) */}
+            {/* 2. Architecture StateGraph Button */}
             <button 
               className="header-top-btn"
               onClick={() => setIsArchitectureOpen(true)}
@@ -532,20 +562,10 @@ export default function App() {
               <span>⚡ Architecture</span>
             </button>
 
-            {/* 3. Interactive Well Graph Trigger (Clean Modal without auto-query) */}
-            <button 
-              className="header-top-btn"
-              onClick={() => setIsWellGraphOpen(true)}
-              title="Explore 2D Wellbore Hub & Spoke Graph without running chat query"
-            >
-              <Compass size={14} style={{ color: 'var(--alert-success)' }} />
-              <span>🗺️ Well Graph</span>
-            </button>
-
             {/* Model Badge */}
             <div className="model-badge">
               <div className="model-dot"></div>
-              <span>NVIDIA Nemotron-3 Ultra 550B</span>
+              <span>Enterprise Drilling LLM</span>
             </div>
           </div>
         </header>
@@ -558,7 +578,7 @@ export default function App() {
               <div className="hero-logo-box">OIL</div>
               <h1 className="hero-title">Oil India Intelligence System</h1>
               <p className="hero-sub">
-                Ask any drilling question, provide your rig coordinates, or upload a geo-tagged wellsite photo to trigger multi-agent offset analysis powered by NVIDIA Nemotron-3 Ultra.
+                Ask any drilling question, choose your rig location, or upload a wellsite photo to trigger multi-agent offset analysis powered by Enterprise Drilling LLM.
               </p>
 
               {/* 4 Clean Example Cards */}
@@ -666,7 +686,7 @@ export default function App() {
               className="send-btn"
               onClick={() => handleSendMessage()}
               disabled={!inputValue.trim() || isLoading}
-              title="Send to NVIDIA Nemotron"
+              title="Send to Enterprise LLM Engine"
             >
               <Send size={16} />
             </button>
@@ -715,6 +735,18 @@ export default function App() {
         <ArchitectureModal 
           isOpen={true}
           onClose={() => setIsArchitectureOpen(false)}
+        />
+      )}
+
+      {/* Rig Location Selector Modal */}
+      {isLocationModalOpen && (
+        <LocationModal 
+          isOpen={true}
+          onClose={() => setIsLocationModalOpen(false)}
+          currentLocation={activeLocation}
+          onSelectLocation={(newLoc) => {
+            setActiveLocation(newLoc);
+          }}
         />
       )}
 

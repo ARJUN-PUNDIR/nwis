@@ -128,7 +128,7 @@ export default function Sidebar({
       <div className="sidebar-footer">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <div className="model-dot"></div>
-          <span>eRTMAC &amp; Nemotron-3</span>
+          <span>eRTMAC &amp; Enterprise LLM</span>
         </div>
         <span style={{ fontSize: '0.68rem', fontFamily: 'monospace' }}>v3.5</span>
       </div>

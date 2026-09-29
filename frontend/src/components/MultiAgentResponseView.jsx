@@ -41,6 +41,54 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
 
   const { geostratum, lithoguard, mudsmith, casingpro, nptsentry } = agents_data || {};
 
+  // Real-Time Dynamic Depth Pointer state synchronized with Well Graph
+  const initialDepth = geostratum?.active_depth_md || 2820.0;
+  const [liveDepth, setLiveDepth] = useState(initialDepth);
+
+  // Dynamic metrics calculated in real-time as pointer moves
+  const barailTop = 2815;
+  const barailDist = barailTop - liveDepth;
+  const liveTvd = Math.round(liveDepth - 35);
+
+  const getDynamicRisk = (d) => {
+    if (d >= 2835 && d <= 2865) {
+      return {
+        level: "CRITICAL",
+        badge: "CRITICAL LOSS CORRIDOR",
+        lossRisk: 94,
+        color: "red",
+        text: `Severe Mud Loss Corridor active at ${d}m (Matches Well B-04 loss at 2850m). Fracture gradient only 1.22 SG eq.`
+      };
+    }
+    if (d >= 2810 && d < 2835) {
+      return {
+        level: "ADVISORY",
+        badge: "BARAIL TRANSITION",
+        lossRisk: 72,
+        color: "yellow",
+        text: `Approaching Barail Arenaceous Sand Member (${Math.max(0, barailTop - d)}m remaining). Pre-treat mud and hold 40 bbl LCM pill on standby.`
+      };
+    }
+    if (d > 2865) {
+      return {
+        level: "WARNING",
+        badge: "DIFFERENTIAL STICKING",
+        lossRisk: 48,
+        color: "yellow",
+        text: `Drilling permeable depleted sand at ${d}m. Differential overbalance must remain under 250 psi to avoid stuck pipe (Well C-12).`
+      };
+    }
+    return {
+      level: "NOMINAL",
+      badge: "STABLE DRILLING",
+      lossRisk: 15,
+      color: "green",
+      text: `Drilling stable Tipam section at ${d}m MD (${barailTop - d}m above Barail sand top). Nominal parameters maintained.`
+    };
+  };
+
+  const dynamicRisk = getDynamicRisk(liveDepth);
+
   // Realistic fallback live telemetry stream
   const telemetry = ertmac_telemetry || {
     status: "ONLINE_STREAMING",
@@ -483,25 +531,46 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
         ))}
       </div>
 
-      {/* 1. Five Specialized Agent Horizon Pills */}
+      {/* 1. Five Specialized Agent Horizon Pills with Real-Time Depth Synchronization */}
       {agent_pills && agent_pills.length > 0 && (
         <div className="agent-horizon-pills">
-          {agent_pills.map((agent) => (
-            <div 
-              key={agent.id}
-              className={`agent-mini-pill ${agent.color || 'green'} ${activeTab === agent.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(agent.id)}
-              title={`Click to inspect ${agent.name} technical details`}
-            >
-              <div className="pill-top-row">
-                <span className="pill-agent-name">{agent.name}</span>
-                <span className={`pill-badge ${agent.color || 'green'}`}>{agent.badge || 'VERIFIED'}</span>
+          {agent_pills.map((agent) => {
+            let statusText = agent.status;
+            let badgeText = agent.badge || 'VERIFIED';
+            let pillColor = agent.color || 'green';
+
+            if (agent.id === 'geostratum') {
+              statusText = barailDist > 0 ? `Barail Top in ${barailDist}m` : (barailDist === 0 ? 'Top @ 2815m' : `${Math.abs(barailDist)}m inside Barail`);
+              badgeText = `${liveDepth}m MD`;
+            } else if (agent.id === 'lithoguard') {
+              statusText = `${dynamicRisk.lossRisk}% Loss Risk @ ${liveDepth}m`;
+              badgeText = dynamicRisk.badge;
+              pillColor = dynamicRisk.color;
+            } else if (agent.id === 'mudsmith') {
+              statusText = liveDepth >= 2810 ? '1.15-1.17 SG | 40 bbl LCM' : '1.18 SG | Circulation OK';
+              badgeText = liveDepth >= 2810 ? 'ACTION READY' : 'NOMINAL';
+              pillColor = liveDepth >= 2810 ? 'yellow' : 'green';
+            } else if (agent.id === 'casingpro') {
+              statusText = `9-5/8" Shoe @ 2750m (+${liveDepth - 2750}m)`;
+            }
+
+            return (
+              <div 
+                key={agent.id}
+                className={`agent-mini-pill ${pillColor} ${activeTab === agent.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(agent.id)}
+                title={`Click to inspect ${agent.name} technical details`}
+              >
+                <div className="pill-top-row">
+                  <span className="pill-agent-name">{agent.name}</span>
+                  <span className={`pill-badge ${pillColor}`}>{badgeText}</span>
+                </div>
+                <span className={`pill-status-text ${pillColor}`}>
+                  {statusText}
+                </span>
               </div>
-              <span className={`pill-status-text ${agent.color || 'green'}`}>
-                {agent.status}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -581,6 +650,44 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
               <span>📄 1-Page Rig Tour Sheet</span>
             </button>
           </div>
+        </div>
+
+        {/* Real-Time Live Depth Synchronizer Bar */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '8px',
+          background: '#f8fafc',
+          border: '1px solid #cbd5e1',
+          borderRadius: '7px',
+          padding: '6px 12px',
+          marginBottom: '8px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0284c7' }}>
+              📍 Real-Time Pointer Depth: {liveDepth}m MD
+            </span>
+            <span style={{ fontSize: '0.74rem', color: '#64748b' }}>
+              (TVD: {liveTvd}m)
+            </span>
+            <span style={{ 
+              fontSize: '0.72rem', 
+              fontWeight: 800, 
+              padding: '1px 6px', 
+              borderRadius: '4px',
+              background: dynamicRisk.color === 'red' ? '#fee2e2' : (dynamicRisk.color === 'yellow' ? '#fef3c7' : '#dcfce7'),
+              color: dynamicRisk.color === 'red' ? '#dc2626' : (dynamicRisk.color === 'yellow' ? '#b45309' : '#15803d'),
+              border: `1px solid ${dynamicRisk.color === 'red' ? '#fecaca' : (dynamicRisk.color === 'yellow' ? '#fde68a' : '#bbf7d0')}`
+            }}>
+              {dynamicRisk.badge}
+            </span>
+          </div>
+
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569' }}>
+            {barailDist > 0 ? `Target Barail Sand: ${barailDist}m remaining` : `Inside Barail Sand by ${Math.abs(barailDist)}m`}
+          </span>
         </div>
 
         <div className="verdict-bullets">
@@ -1284,7 +1391,7 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
           </div>
         )}
 
-        {/* Tab 6: Full NVIDIA Nemotron Synthesized Narrative */}
+        {/* Tab 6: Full Enterprise LLM Synthesized Narrative */}
         {activeTab === 'narrative' && (
           <div className="narrative-content">
             <div style={{ whiteSpace: 'pre-wrap', fontSize: '0.88rem', lineHeight: '1.7', color: 'var(--text-body)' }}>
@@ -1297,7 +1404,12 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
       {/* 4. Embedded Interactive Well Graph (Visual Map / Proximity Toggle) */}
       {well_graph && (
         <div style={{ marginTop: '1rem' }}>
-          <InteractiveWellGraph graphData={well_graph} />
+          <InteractiveWellGraph 
+            graphData={well_graph} 
+            depth={liveDepth}
+            onDepthChange={(newDepth) => setLiveDepth(newDepth)}
+            onOpenDocument={onOpenDocument}
+          />
         </div>
       )}
 
