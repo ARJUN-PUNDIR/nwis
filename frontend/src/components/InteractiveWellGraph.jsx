@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Compass, AlertTriangle, ShieldCheck, Layers, ArrowRight, Sliders, List, Network } from 'lucide-react';
 
-export default function InteractiveWellGraph({ graphData }) {
+export default function InteractiveWellGraph({ graphData, onAskWell }) {
   const [selectedNode, setSelectedNode] = useState(null);
   const [viewMode, setViewMode] = useState('network'); // 'network' | 'list'
   const [simDepth, setSimDepth] = useState(2740);
@@ -294,6 +294,33 @@ export default function InteractiveWellGraph({ graphData }) {
             <strong style={{ color: '#0284c7' }}>Proven Historical Mitigation: </strong>
             <span style={{ color: '#1e293b' }}>{activeWell.mitigation}</span>
           </div>
+
+          {onAskWell && (
+            <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => onAskWell(`Analyze risks and historical incidents for ${activeWell.name} (${activeWell.code}) and how it impacts Active Well A-01.`)}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #0284c7',
+                  borderRadius: '5px',
+                  padding: '4px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  color: '#0284c7',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => { e.target.style.background = '#0284c7'; e.target.style.color = '#ffffff'; }}
+                onMouseLeave={(e) => { e.target.style.background = '#ffffff'; e.target.style.color = '#0284c7'; }}
+              >
+                <span>💬 Ask Copilot about {activeWell.code || activeWell.name}</span>
+                <ArrowRight size={12} />
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

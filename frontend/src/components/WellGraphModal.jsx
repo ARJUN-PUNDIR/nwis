@@ -1,9 +1,11 @@
-import React from 'react';
-import { Compass, X, Sliders, Info, MessageSquare } from 'lucide-react';
+import React, { useState } from 'react';
+import { Compass, X, Sliders, Info, MessageSquare, Send, Sparkles, AlertTriangle, ArrowRight } from 'lucide-react';
 import InteractiveWellGraph from './InteractiveWellGraph';
 
 export default function WellGraphModal({ isOpen = true, onClose, graphData, onConsultWell }) {
   if (!isOpen) return null;
+
+  const [customQuery, setCustomQuery] = useState("");
 
   // Realistic default graph data if not provided
   const defaultGraphData = graphData || {
@@ -97,54 +99,132 @@ export default function WellGraphModal({ isOpen = true, onClose, graphData, onCo
     edges: []
   };
 
+  const handleSendQuery = (text) => {
+    const q = text || customQuery;
+    if (!q.trim()) return;
+    if (onConsultWell) {
+      onConsultWell(q);
+    }
+    onClose();
+  };
+
+  const quickChips = [
+    { label: "⚠️ Loss risk at 2850m", query: "What is the mud loss history at 2850m in Well B-04 and what LCM recipe was used?" },
+    { label: "⚖️ Compare Casing Shoes", query: "Compare intermediate casing shoe depths across Active Well A-01, B-04, and C-12." },
+    { label: "🚨 Kopili Gas Kick Pressure", query: "How was the gas kick in Well D-08 at 3000m controlled and what were the shut-in pressures?" },
+    { label: "🛠️ 40 bbl LCM Recipe", query: "What is the standby 40 bbl LCM pill formulation recommended for entering Barail Sand?" }
+  ];
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '860px', maxHeight: '90vh' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', maxHeight: '92vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
         <div className="modal-header">
-          <div className="modal-title">
-            <Compass size={20} style={{ color: 'var(--alert-success)' }} />
-            <span>Interactive Offset Wellbore Graph &amp; Spatial Horizon</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div className="doc-icon-box" style={{ background: '#ecfdf5', borderColor: '#a7f3d0' }}>
+              <Compass size={20} style={{ color: 'var(--alert-success)' }} />
+            </div>
+            <div>
+              <h2 className="modal-title" style={{ fontSize: '1.05rem', margin: 0 }}>
+                Interactive Offset Wellbore Graph &amp; Spatial Horizon
+              </h2>
+              <p className="modal-sub" style={{ margin: 0, fontSize: '0.76rem' }}>
+                Center: Active Well NHKT-A01 (27.2850°N, 95.3210°E) • 5 Offset Wells Linked Within 5.0 km
+              </p>
+            </div>
           </div>
           <button className="close-modal-btn" onClick={onClose}>✕</button>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', margin: 0 }}>
-            Visual hub-and-spoke projection centered on <strong>Active Well NHKT-A01</strong> (27.2850°N, 95.3210°E). Click nodes to inspect casing profiles or adjust depth slider.
-          </p>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--alert-success)', background: '#ecfdf5', padding: '3px 8px', borderRadius: '4px', border: '1px solid #a7f3d0' }}>
-            ● 5 Offset Wells Linked
-          </span>
+        {/* Embedded Interactive Well Graph */}
+        <div style={{ background: '#ffffff', borderRadius: '8px', border: '1px solid var(--border-subtle)', overflow: 'hidden', flex: 1, minHeight: '340px' }}>
+          <InteractiveWellGraph 
+            graphData={defaultGraphData} 
+            onAskWell={(q) => handleSendQuery(q)}
+          />
         </div>
 
-        {/* Embedded Interactive Well Graph */}
-        <div style={{ background: '#ffffff', borderRadius: '8px', border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
-          <InteractiveWellGraph graphData={defaultGraphData} />
+        {/* Interactive Query Input Bar (Directly inside Well Graph Modal!) */}
+        <div style={{ marginTop: '0.65rem', background: '#f8fafc', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Sparkles size={14} style={{ color: 'var(--oil-amber)' }} />
+              <span>Ask NWIS AI Copilot about this Wellbore Network:</span>
+            </span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+              Type any query or click a quick prompt chip
+            </span>
+          </div>
+
+          {/* Quick Prompt Chips */}
+          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '6px', marginBottom: '6px' }}>
+            {quickChips.map((c, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSendQuery(c.query)}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid var(--border-medium)',
+                  borderRadius: '9999px',
+                  padding: '3px 9px',
+                  fontSize: '0.73rem',
+                  fontWeight: 600,
+                  color: 'var(--text-body)',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.borderColor = 'var(--active-blue)'}
+                onMouseLeave={(e) => e.target.style.borderColor = 'var(--border-medium)'}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Custom Query Input Box */}
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input 
+              type="text"
+              placeholder="Write your custom query here (e.g., What are the loss risks at 2850m? Compare casing shoes)..."
+              value={customQuery}
+              onChange={(e) => setCustomQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSendQuery();
+                }
+              }}
+              style={{
+                flex: 1,
+                padding: '0.5rem 0.85rem',
+                borderRadius: '6px',
+                border: '1px solid var(--border-medium)',
+                fontSize: '0.84rem',
+                outline: 'none',
+                background: '#ffffff'
+              }}
+            />
+            <button 
+              className="send-btn" 
+              onClick={() => handleSendQuery()}
+              disabled={!customQuery.trim()}
+              style={{ padding: '0.5rem 1.1rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+            >
+              <span>Ask Copilot</span>
+              <Send size={14} />
+            </button>
+          </div>
         </div>
 
         {/* Footer Actions */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
-          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-            Radius: 5.0 km • Asset: Nahorkatiya South Sector B
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem', paddingTop: '0.4rem', borderTop: '1px solid var(--border-subtle)' }}>
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+            Radius: 5.0 km • Asset: Nahorkatiya South Sector B (OIL Rig-14)
           </span>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button className="btn-secondary" onClick={onClose}>
-              Close Viewer
-            </button>
-            <button 
-              className="send-btn" 
-              onClick={() => {
-                if (onConsultWell) {
-                  onConsultWell("What are the casing programs and loss risks across all 4 offset wells in Nahorkatiya Sector B?");
-                }
-                onClose();
-              }}
-              style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
-            >
-              <MessageSquare size={14} />
-              <span>Ask Copilot about Offset Wells</span>
-            </button>
-          </div>
+          <button className="btn-secondary" onClick={onClose}>
+            Close Graph
+          </button>
         </div>
       </div>
     </div>
