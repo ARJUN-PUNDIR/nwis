@@ -6,6 +6,7 @@ import {
   BookOpen, 
   Compass, 
   History, 
+  Trash2,
   Activity, 
   CheckCircle2, 
   ExternalLink 
@@ -15,21 +16,12 @@ export default function Sidebar({
   onNewChat, 
   onOpenGeoTag, 
   onOpenCaseStudies, 
-  onTriggerWellGraph, 
-  chatHistory, 
+  onOpenWellGraph, 
+  chatHistory = [], 
   onSelectHistory, 
+  onDeleteHistory,
   activeChatId 
 }) {
-  const defaultHistory = [
-    { id: "h1", title: "Barail Mud Loss Mitigation @ 2820m", depth: "2820m" },
-    { id: "h2", title: "Well B-04 40 bbl LCM Formulation", depth: "2850m" },
-    { id: "h3", title: "Well C-12 Differential Sticking Soak", depth: "2910m" },
-    { id: "h4", title: "Kopili Gas Kick Driller's Method Kill", depth: "3000m" },
-    { id: "h5", title: "Nahorkatiya Sector B Casing Shoes", depth: "2750m" }
-  ];
-
-  const historyItems = chatHistory && chatHistory.length > 0 ? chatHistory : defaultHistory;
-
   return (
     <aside className="sidebar">
       {/* Brand Header */}
@@ -53,22 +45,22 @@ export default function Sidebar({
       <div className="sidebar-section">
         <span className="sidebar-section-title">Drilling Intelligence Tools</span>
         
-        <div className="nav-item active" onClick={onNewChat}>
+        <div className="nav-item active" onClick={onNewChat} title="Start clean conversational rig inquiry">
           <MessageSquare size={16} style={{ color: 'var(--active-blue)' }} />
           <span>Rig AI Copilot</span>
         </div>
 
-        <div className="nav-item" onClick={onOpenGeoTag}>
+        <div className="nav-item" onClick={onOpenGeoTag} title="Upload photo or enter coordinates to resolve offset wells">
           <Camera size={16} style={{ color: 'var(--oil-amber)' }} />
           <span>Geo-Tag Site Inquiry</span>
         </div>
 
-        <div className="nav-item" onClick={onOpenCaseStudies}>
+        <div className="nav-item" onClick={onOpenCaseStudies} title="Inspect verified historical mud loss, stuck pipe, and kick case studies">
           <BookOpen size={16} style={{ color: 'var(--swarm-purple)' }} />
           <span>Historical Case Studies</span>
         </div>
 
-        <div className="nav-item" onClick={onTriggerWellGraph}>
+        <div className="nav-item" onClick={onOpenWellGraph} title="Explore interactive 2D hub-and-spoke wellbore network without firing queries">
           <Compass size={16} style={{ color: 'var(--alert-success)' }} />
           <span>Interactive Well Graph</span>
         </div>
@@ -76,23 +68,59 @@ export default function Sidebar({
 
       {/* History Section */}
       <div className="sidebar-section" style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <span className="sidebar-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-          <History size={13} />
-          Consultation History
-        </span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', padding: '0 0.5rem' }}>
+          <span className="sidebar-section-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <History size={13} />
+            Consultation History
+          </span>
+          <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
+            {chatHistory.length} saved
+          </span>
+        </div>
 
-        <div className="history-list">
-          {historyItems.map((item) => (
-            <div 
-              key={item.id} 
-              className={`history-item ${activeChatId === item.id ? 'active' : ''}`}
-              onClick={() => onSelectHistory(item)}
-              title={item.title}
-            >
-              <MessageSquare size={13} style={{ flexShrink: 0 }} />
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</span>
+        <div className="history-list" style={{ overflowY: 'auto', flex: 1 }}>
+          {chatHistory.length === 0 ? (
+            <div style={{ padding: '0.75rem', fontSize: '0.76rem', color: 'var(--text-dim)', textAlign: 'center' }}>
+              No previous consultations yet. Ask a question to save.
             </div>
-          ))}
+          ) : (
+            chatHistory.map((item) => (
+              <div 
+                key={item.id} 
+                className={`history-item ${activeChatId === item.id ? 'active' : ''}`}
+                onClick={() => onSelectHistory(item)}
+                title={item.title}
+                style={{ position: 'relative' }}
+              >
+                <MessageSquare size={13} style={{ flexShrink: 0 }} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                  {item.title}
+                </span>
+
+                {onDeleteHistory && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteHistory(item.id);
+                    }}
+                    className="history-delete-btn"
+                    title="Delete saved consultation"
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--text-dim)',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -100,9 +128,9 @@ export default function Sidebar({
       <div className="sidebar-footer">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <div className="model-dot"></div>
-          <span>eRTMAC & Nemotron-3</span>
+          <span>eRTMAC &amp; Nemotron-3</span>
         </div>
-        <span style={{ fontSize: '0.68rem', fontFamily: 'monospace' }}>v3.0</span>
+        <span style={{ fontSize: '0.68rem', fontFamily: 'monospace' }}>v3.5</span>
       </div>
     </aside>
   );

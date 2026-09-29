@@ -255,6 +255,48 @@ body {
   color: var(--text-main);
 }
 
+.history-item .history-delete-btn {
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.history-item:hover .history-delete-btn {
+  opacity: 0.75;
+}
+
+.history-item .history-delete-btn:hover {
+  opacity: 1;
+  color: var(--alert-danger) !important;
+  background: #fee2e2;
+}
+
+.header-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  border: 1px solid var(--border-medium);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-body);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.header-top-btn:hover {
+  background: #f8fafc;
+  border-color: var(--active-blue);
+  color: var(--active-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12);
+}
+
 .sidebar-footer {
   padding: 0.85rem 1rem;
   border-top: 1px solid var(--border-subtle);
