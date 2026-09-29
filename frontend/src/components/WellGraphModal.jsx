@@ -206,10 +206,11 @@ export default function WellGraphModal({ isOpen = true, onClose, graphData, onCo
               }}
             />
             <button 
-              className="send-btn" 
+              type="button"
+              className="btn-primary" 
               onClick={() => handleSendQuery()}
               disabled={!customQuery.trim()}
-              style={{ padding: '0.5rem 1.1rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
+              style={{ height: '36px', padding: '0 1.1rem' }}
             >
               <span>Ask Copilot</span>
               <Send size={14} />

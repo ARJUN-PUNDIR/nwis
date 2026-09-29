@@ -162,7 +162,7 @@ export default function GeoTagModal({ isOpen = true, onClose, onResolve, onResol
         </div>
 
         {/* Modal Actions */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+        <div className="modal-actions">
           <button 
             type="button" 
             className="btn-secondary" 
@@ -172,10 +172,9 @@ export default function GeoTagModal({ isOpen = true, onClose, onResolve, onResol
           </button>
           <button 
             type="button" 
-            className="send-btn" 
+            className="btn-primary" 
             onClick={handleSubmit} 
             disabled={isUploading}
-            style={{ padding: '0.5rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
           >
             {isUploading ? (
               <span>Resolving Nearby Wells...</span>

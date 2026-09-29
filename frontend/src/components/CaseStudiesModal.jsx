@@ -428,15 +428,14 @@ Recommendation: Pre-treat active mud system with 20 ppb CaCO3 before drilling 28
         )}
 
         {/* Modal Actions Footer */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem', paddingTop: '0.65rem', borderTop: '1px solid var(--border-subtle)' }}>
           <button className="btn-secondary" onClick={onClose}>
             Close
           </button>
           
           <button 
-            className="send-btn" 
+            className="btn-primary" 
             onClick={() => handleApplyToChat(currentCase)}
-            style={{ padding: '0.5rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}
           >
             <ArrowRight size={15} />
             <span>Consult Copilot on Selected Case</span>
