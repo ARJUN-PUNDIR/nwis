@@ -16,7 +16,7 @@ import {
   Activity 
 } from 'lucide-react';
 
-export default function InteractiveWellGraph({ graphData, depth, onDepthChange, onAskWell, onOpenDocument }) {
+export default function InteractiveWellGraph({ graphData, depth, onDepthChange, onAskWell, onOpenDocument, isModal = false }) {
   const [selectedNode, setSelectedNode] = useState(null);
   const [viewMode, setViewMode] = useState('network'); // 'network' | 'list'
   const [simDepth, setSimDepth] = useState(depth || 2820);
@@ -94,23 +94,23 @@ export default function InteractiveWellGraph({ graphData, depth, onDepthChange, 
     return '#059669';
   };
 
-  // Node relative positions in clean layout
+  // Node relative positions in clean 720x360 layout with generous margins
   const nodePositions = [
-    { id: "NHKT-B04", x: 75, y: 110, align: "left" },
-    { id: "NHKT-C12", x: 380, y: 55, align: "right" },
-    { id: "NHKT-D08", x: 230, y: 220, align: "center" },
-    { id: "NHKT-E02", x: 85, y: 35, align: "left" },
-    { id: "NHKT-F15", x: 395, y: 175, align: "right" }
+    { id: "NHKT-B04", x: 230, y: 180, tagX: 120, tagY: 168 },  // West 1.24km
+    { id: "NHKT-C12", x: 480, y: 90,  tagX: 498, tagY: 78 },   // NE 2.08km
+    { id: "NHKT-D08", x: 360, y: 295, tagX: 378, tagY: 283 },  // South 3.44km
+    { id: "NHKT-E02", x: 210, y: 80,  tagX: 100, tagY: 68 },   // NW 4.14km
+    { id: "NHKT-F15", x: 570, y: 180, tagX: 588, tagY: 168 }   // East 6.82km
   ];
 
   return (
     <div style={{
-      marginTop: '1.25rem',
+      marginTop: isModal ? '0' : '1.25rem',
       background: '#ffffff',
-      border: '1.5px solid #cbd5e1',
+      border: isModal ? '1px solid #e2e8f0' : '1.5px solid #cbd5e1',
       borderRadius: '12px',
-      padding: '1.35rem',
-      boxShadow: '0 4px 14px rgba(15, 23, 42, 0.06)'
+      padding: isModal ? '1rem 1.15rem' : '1.35rem',
+      boxShadow: isModal ? 'none' : '0 4px 14px rgba(15, 23, 42, 0.06)'
     }}>
       {/* Header with View Toggle & Live Depth Horizon */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.9rem' }}>
@@ -223,30 +223,50 @@ export default function InteractiveWellGraph({ graphData, depth, onDepthChange, 
 
       {/* VIEW MODE 1: Clean Minimalist Visual Network */}
       {viewMode === 'network' && (
-        <div style={{ position: 'relative', width: '100%', height: '260px', background: '#ffffff', borderRadius: '10px', marginTop: '0.9rem', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-          <svg width="100%" height="100%" viewBox="0 0 480 260">
-            {/* Range Rings (1km, 3km, 5km) */}
-            <circle cx="240" cy="125" r="55" fill="none" stroke="#f1f5f9" strokeWidth="1.5" strokeDasharray="3 3" />
-            <circle cx="240" cy="125" r="105" fill="none" stroke="#f1f5f9" strokeWidth="1.5" strokeDasharray="3 3" />
-            <text x="240" y="75" textAnchor="middle" fontSize="7" fill="#94a3b8">1.5 km</text>
-            <text x="240" y="25" textAnchor="middle" fontSize="7" fill="#94a3b8">3.5 km</text>
+        <div style={{ 
+          position: 'relative', 
+          width: '100%', 
+          height: '350px', 
+          background: '#ffffff', 
+          borderRadius: '10px', 
+          marginTop: '0.9rem', 
+          border: '1.5px solid #e2e8f0', 
+          boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.02)',
+          overflow: 'hidden' 
+        }}>
+          <svg width="100%" height="100%" viewBox="0 0 720 360" preserveAspectRatio="xMidYMid meet">
+            {/* Range Rings (1.5km, 3.5km, 5.0km) */}
+            <circle cx="360" cy="180" r="75" fill="none" stroke="#f1f5f9" strokeWidth="1.5" strokeDasharray="3 3" />
+            <circle cx="360" cy="180" r="145" fill="none" stroke="#f1f5f9" strokeWidth="1.5" strokeDasharray="3 3" />
+            <circle cx="360" cy="180" r="215" fill="none" stroke="#e2e8f0" strokeWidth="1.5" strokeDasharray="4 4" />
+
+            {/* Distance Markers */}
+            <text x="360" y="112" textAnchor="middle" fontSize="8" fontWeight="600" fill="#94a3b8">1.5 km</text>
+            <text x="360" y="42" textAnchor="middle" fontSize="8" fontWeight="600" fill="#94a3b8">3.5 km</text>
+            <text x="360" y="325" textAnchor="middle" fontSize="8" fontWeight="600" fill="#94a3b8">5.0 km Horizon Limit</text>
+
+            {/* Cardinal Direction Ticks */}
+            <text x="360" y="16" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#64748b">▲ NORTH (0°)</text>
+            <text x="360" y="352" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="#64748b">▼ SOUTH (180°)</text>
+            <text x="24" y="184" textAnchor="start" fontSize="8.5" fontWeight="800" fill="#64748b">◄ WEST</text>
+            <text x="696" y="184" textAnchor="end" fontSize="8.5" fontWeight="800" fill="#64748b">EAST ►</text>
 
             {/* Center Anchor: Active Well A */}
-            <g transform="translate(240, 125)">
-              <circle r="26" fill="rgba(2, 132, 199, 0.08)" />
-              <circle r="16" fill="rgba(2, 132, 199, 0.18)" />
+            <g transform="translate(360, 180)">
+              <circle r="30" fill="rgba(2, 132, 199, 0.06)" />
+              <circle r="18" fill="rgba(2, 132, 199, 0.16)" />
               <circle r="9" fill="#0284c7" stroke="#ffffff" strokeWidth="2.5" />
-              <text y="32" textAnchor="middle" fontSize="11" fontWeight="800" fill="#0f172a">
+              <text y="34" textAnchor="middle" fontSize="11" fontWeight="800" fill="#0f172a">
                 ★ ACTIVE WELL A-01
               </text>
-              <text y="43" textAnchor="middle" fontSize="9" fontFamily="monospace" fontWeight="700" fill="#0284c7">
+              <text y="46" textAnchor="middle" fontSize="9" fontFamily="monospace" fontWeight="700" fill="#0284c7">
                 {simDepth}m MD
               </text>
             </g>
 
             {/* Connecting Spokes and Offset Nodes */}
             {offsetNodes.map((w, idx) => {
-              const pos = nodePositions[idx] || { x: 100, y: 100 };
+              const pos = nodePositions[idx] || { x: 230, y: 180, tagX: 120, tagY: 168 };
               const isSelected = activeWell?.id === w.id;
               const nodeColor = getNodeColor(w.severity);
               const depthDelta = w.incident_depth ? (w.incident_depth - simDepth) : null;
@@ -256,8 +276,8 @@ export default function InteractiveWellGraph({ graphData, depth, onDepthChange, 
                 <g key={w.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedNode(w)}>
                   {/* Subtle connection line */}
                   <line 
-                    x1="240" 
-                    y1="125" 
+                    x1="360" 
+                    y1="180" 
                     x2={pos.x} 
                     y2={pos.y} 
                     stroke={isSelected ? nodeColor : (isNearHazard ? '#ef4444' : '#cbd5e1')} 
@@ -273,24 +293,24 @@ export default function InteractiveWellGraph({ graphData, depth, onDepthChange, 
                     fill={nodeColor} 
                     stroke="#ffffff" 
                     strokeWidth="2.5"
-                    filter={isSelected ? 'drop-shadow(0 3px 6px rgba(0,0,0,0.2))' : 'none'}
+                    filter={isSelected ? 'drop-shadow(0 3px 6px rgba(0,0,0,0.25))' : 'none'}
                   />
 
                   {/* Clean Pill Tag with Real-Time Proximity */}
                   <rect 
-                    x={pos.x > 240 ? pos.x + 14 : pos.x - 90} 
-                    y={pos.y - 12} 
-                    width="82" 
-                    height="24" 
+                    x={pos.tagX} 
+                    y={pos.tagY} 
+                    width="96" 
+                    height="26" 
                     rx="5" 
                     fill="#ffffff" 
                     stroke={isSelected ? nodeColor : '#94a3b8'} 
                     strokeWidth={isSelected ? '2' : '1'}
-                    filter="drop-shadow(0 2px 4px rgba(0,0,0,0.08))"
+                    filter="drop-shadow(0 2px 5px rgba(0,0,0,0.08))"
                   />
                   <text 
-                    x={pos.x > 240 ? pos.x + 55 : pos.x - 49} 
-                    y={pos.y + 1} 
+                    x={pos.tagX + 48} 
+                    y={pos.tagY + 12} 
                     textAnchor="middle" 
                     fontSize="9.5" 
                     fontWeight="800" 
@@ -299,8 +319,8 @@ export default function InteractiveWellGraph({ graphData, depth, onDepthChange, 
                     {w.code || w.id}
                   </text>
                   <text 
-                    x={pos.x > 240 ? pos.x + 55 : pos.x - 49} 
-                    y={pos.y + 9} 
+                    x={pos.tagX + 48} 
+                    y={pos.tagY + 21} 
                     textAnchor="middle" 
                     fontSize="7" 
                     fontWeight="700" 

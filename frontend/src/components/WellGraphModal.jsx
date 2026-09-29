@@ -117,7 +117,18 @@ export default function WellGraphModal({ isOpen = true, onClose, graphData, onCo
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '900px', maxHeight: '92vh', display: 'flex', flexDirection: 'column' }}>
+      <div 
+        className="modal-content" 
+        onClick={(e) => e.stopPropagation()} 
+        style={{ 
+          maxWidth: '1040px', 
+          width: '95vw', 
+          maxHeight: '94vh', 
+          display: 'flex', 
+          flexDirection: 'column',
+          padding: '1.25rem 1.4rem'
+        }}
+      >
         {/* Header */}
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -125,7 +136,7 @@ export default function WellGraphModal({ isOpen = true, onClose, graphData, onCo
               <Compass size={20} style={{ color: 'var(--alert-success)' }} />
             </div>
             <div>
-              <h2 className="modal-title" style={{ fontSize: '1.05rem', margin: 0 }}>
+              <h2 className="modal-title" style={{ fontSize: '1.08rem', margin: 0 }}>
                 Interactive Offset Wellbore Graph &amp; Spatial Horizon
               </h2>
               <p className="modal-sub" style={{ margin: 0, fontSize: '0.76rem' }}>
@@ -136,16 +147,30 @@ export default function WellGraphModal({ isOpen = true, onClose, graphData, onCo
           <button className="close-modal-btn" onClick={onClose}>✕</button>
         </div>
 
-        {/* Embedded Interactive Well Graph */}
-        <div style={{ background: '#ffffff', borderRadius: '8px', border: '1px solid var(--border-subtle)', overflow: 'hidden', flex: 1, minHeight: '340px' }}>
+        {/* Scrollable Modal Body: Full visibility and smooth scrolling for well map & detailed dossier */}
+        <div style={{ 
+          flex: 1, 
+          overflowY: 'auto', 
+          paddingRight: '6px', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: '0.85rem' 
+        }}>
+          {/* Embedded Interactive Well Graph */}
           <InteractiveWellGraph 
             graphData={defaultGraphData} 
             onAskWell={(q) => handleSendQuery(q)}
+            isModal={true}
           />
-        </div>
 
-        {/* Interactive Query Input Bar (Directly inside Well Graph Modal!) */}
-        <div style={{ marginTop: '0.65rem', background: '#f8fafc', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+          {/* Interactive Query Input Bar (Directly inside Well Graph Modal!) */}
+          <div style={{ 
+            background: '#f8fafc', 
+            padding: '12px 14px', 
+            borderRadius: '8px', 
+            border: '1.5px solid var(--border-medium)',
+            marginTop: '0.5rem'
+          }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
             <span style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Sparkles size={14} style={{ color: 'var(--oil-amber)' }} />
@@ -217,6 +242,7 @@ export default function WellGraphModal({ isOpen = true, onClose, graphData, onCo
             </button>
           </div>
         </div>
+      </div>
 
         {/* Footer Actions */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem', paddingTop: '0.4rem', borderTop: '1px solid var(--border-subtle)' }}>
