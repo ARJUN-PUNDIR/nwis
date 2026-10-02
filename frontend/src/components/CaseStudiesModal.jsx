@@ -211,7 +211,7 @@ Recommendation: Pre-treat active mud system with 20 ppb CaCO3 before drilling 28
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+            <div className="case-studies-choice-grid">
               {/* CHOICE 1: UPLOAD & ANALYZE CUSTOM PDF */}
               <div
                 onClick={() => setViewMode('upload')}

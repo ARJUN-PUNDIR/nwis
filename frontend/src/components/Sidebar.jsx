@@ -9,10 +9,13 @@ import {
   Trash2,
   Activity, 
   CheckCircle2, 
-  ExternalLink 
+  ExternalLink,
+  X
 } from 'lucide-react';
 
 export default function Sidebar({ 
+  isOpen = false,
+  onClose,
   onNewChat, 
   onOpenGeoTag, 
   onOpenCaseStudies, 
@@ -22,8 +25,13 @@ export default function Sidebar({
   onDeleteHistory,
   activeChatId 
 }) {
+  const handleAction = (callback) => {
+    if (callback) callback();
+    if (onClose) onClose();
+  };
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* Brand Header */}
       <div className="sidebar-header">
         <div className="sidebar-brand">
@@ -33,10 +41,22 @@ export default function Sidebar({
             <div className="brand-sub">Oil India Limited</div>
           </div>
         </div>
+
+        {/* Mobile close button */}
+        {onClose && (
+          <button 
+            className="sidebar-mobile-close-btn" 
+            onClick={onClose} 
+            title="Close navigation menu"
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       {/* New Consultation Button */}
-      <button className="new-chat-btn" onClick={onNewChat}>
+      <button className="new-chat-btn" onClick={() => handleAction(onNewChat)}>
         <Plus size={16} />
         New Consultation
       </button>
@@ -45,22 +65,22 @@ export default function Sidebar({
       <div className="sidebar-section">
         <span className="sidebar-section-title">Drilling Intelligence Tools</span>
         
-        <div className="nav-item active" onClick={onNewChat} title="Start clean conversational rig inquiry">
+        <div className="nav-item active" onClick={() => handleAction(onNewChat)} title="Start clean conversational rig inquiry">
           <MessageSquare size={16} style={{ color: 'var(--active-blue)' }} />
           <span>Rig AI Copilot</span>
         </div>
 
-        <div className="nav-item" onClick={onOpenGeoTag} title="Upload photo or enter coordinates to resolve offset wells">
+        <div className="nav-item" onClick={() => handleAction(onOpenGeoTag)} title="Upload photo or enter coordinates to resolve offset wells">
           <Camera size={16} style={{ color: 'var(--oil-amber)' }} />
           <span>Geo-Tag Site Inquiry</span>
         </div>
 
-        <div className="nav-item" onClick={onOpenCaseStudies} title="Inspect verified historical mud loss, stuck pipe, and kick case studies">
+        <div className="nav-item" onClick={() => handleAction(onOpenCaseStudies)} title="Inspect verified historical mud loss, stuck pipe, and kick case studies">
           <BookOpen size={16} style={{ color: 'var(--swarm-purple)' }} />
           <span>Historical Case Studies</span>
         </div>
 
-        <div className="nav-item" onClick={onOpenWellGraph} title="Explore interactive 2D hub-and-spoke wellbore network without firing queries">
+        <div className="nav-item" onClick={() => handleAction(onOpenWellGraph)} title="Explore interactive 2D hub-and-spoke wellbore network without firing queries">
           <Compass size={16} style={{ color: 'var(--alert-success)' }} />
           <span>Interactive Well Graph</span>
         </div>
@@ -88,7 +108,7 @@ export default function Sidebar({
               <div 
                 key={item.id} 
                 className={`history-item ${activeChatId === item.id ? 'active' : ''}`}
-                onClick={() => onSelectHistory(item)}
+                onClick={() => handleAction(() => onSelectHistory(item))}
                 title={item.title}
                 style={{ position: 'relative' }}
               >

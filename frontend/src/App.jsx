@@ -14,7 +14,9 @@ import {
   Zap,
   Database,
   MapPin,
-  ChevronDown
+  ChevronDown,
+  Menu,
+  X
 } from 'lucide-react';
 
 import Sidebar from './components/Sidebar';
@@ -26,8 +28,8 @@ import WellGraphModal from './components/WellGraphModal';
 import SourcesModal from './components/SourcesModal';
 import ArchitectureModal from './components/ArchitectureModal';
 import LocationModal from './components/LocationModal';
+import { BACKEND_URL } from './apiConfig';
 
-const BACKEND_URL = "http://localhost:8001";
 const STORAGE_KEY = "oil_nwis_saved_consultations_v3";
 
 // Initial realistic consultations with complete multi-agent datasets
@@ -237,6 +239,7 @@ export default function App() {
   const [isSourcesOpen, setIsSourcesOpen] = useState(false);
   const [isArchitectureOpen, setIsArchitectureOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
 
   // Active Rig Location & Operational Well State
@@ -503,8 +506,19 @@ export default function App() {
 
   return (
     <div className="app-layout">
+      {/* Mobile Backdrop Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="sidebar-backdrop-overlay" 
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Left Sidebar */}
       <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
         onNewChat={handleNewChat}
         onOpenGeoTag={() => setIsGeoTagOpen(true)}
         onOpenCaseStudies={() => setIsCaseStudiesOpen(true)}
@@ -519,29 +533,41 @@ export default function App() {
       <main className="main-chat">
         {/* Top Header with Upper Action Buttons */}
         <header className="chat-top-header">
-          {/* Interactive Rig Location Selector Button (Point 2) */}
-          <button
-            className="header-location-btn"
-            onClick={() => setIsLocationModalOpen(true)}
-            title="Click to change rig location: current GPS, write custom location, or presets"
-          >
-            <div className="location-pin-box">
-              <MapPin size={16} />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                  {activeLocation.name}
-                </span>
-                <ChevronDown size={13} style={{ color: 'var(--text-muted)' }} />
-              </div>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                {activeLocation.well} • {activeLocation.lat}°N, {activeLocation.lon}°E
-              </span>
-            </div>
-          </button>
+          <div className="header-left-group">
+            {/* Mobile Hamburger Menu Toggle Button */}
+            <button
+              className="mobile-menu-toggle-btn"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              title="Toggle Navigation Menu"
+              aria-label="Toggle Navigation Menu"
+            >
+              <Menu size={18} />
+            </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Interactive Rig Location Selector Button */}
+            <button
+              className="header-location-btn"
+              onClick={() => setIsLocationModalOpen(true)}
+              title="Click to change rig location: current GPS, write custom location, or presets"
+            >
+              <div className="location-pin-box">
+                <MapPin size={16} />
+              </div>
+              <div className="location-text-col">
+                <div className="location-title-row">
+                  <span className="location-title-name">
+                    {activeLocation.name}
+                  </span>
+                  <ChevronDown size={13} style={{ color: 'var(--text-muted)' }} />
+                </div>
+                <span className="location-sub-details">
+                  {activeLocation.well} • {activeLocation.lat}°N, {activeLocation.lon}°E
+                </span>
+              </div>
+            </button>
+          </div>
+
+          <div className="header-right-group">
             {/* 1. Sources Directory Button */}
             <button
               className="header-top-btn"
@@ -549,7 +575,7 @@ export default function App() {
               title="Verified Statutory & Real-Time Sources Directory"
             >
               <Database size={14} style={{ color: 'var(--oil-amber)' }} />
-              <span>📚 Sources</span>
+              <span className="header-btn-text">📚 Sources</span>
             </button>
 
             {/* 2. Architecture StateGraph Button */}
@@ -559,13 +585,13 @@ export default function App() {
               title="Multi-Agent StateGraph Architecture (7 Nodes)"
             >
               <Zap size={14} style={{ color: '#7c3aed' }} />
-              <span>⚡ Architecture</span>
+              <span className="header-btn-text">⚡ Architecture</span>
             </button>
 
             {/* Model Badge */}
             <div className="model-badge">
               <div className="model-dot"></div>
-              <span>Enterprise Drilling LLM</span>
+              <span className="model-badge-text">Enterprise LLM</span>
             </div>
           </div>
         </header>

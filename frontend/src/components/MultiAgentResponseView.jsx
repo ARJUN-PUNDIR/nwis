@@ -936,24 +936,26 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
               </div>
 
               {/* Vertical / Horizontal Depth Log Strip */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {stratColumns.map((col, idx) => {
-                  const isCurrentTarget = 2820 >= col.top_md && 2820 <= col.base_md;
-                  return (
-                    <div 
-                      key={idx}
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '120px 180px 1fr 140px',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '6px 10px',
-                        borderRadius: '6px',
-                        background: isCurrentTarget ? '#fef3c7' : '#ffffff',
-                        border: isCurrentTarget ? '1.5px solid var(--oil-amber)' : '1px solid #e2e8f0',
-                        position: 'relative'
-                      }}
-                    >
+              <div className="strat-columns-wrapper" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', minWidth: '460px' }}>
+                  {stratColumns.map((col, idx) => {
+                    const isCurrentTarget = 2820 >= col.top_md && 2820 <= col.base_md;
+                    return (
+                      <div 
+                        key={idx}
+                        className="strat-row-grid"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '110px 150px 1fr 130px',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          background: isCurrentTarget ? '#fef3c7' : '#ffffff',
+                          border: isCurrentTarget ? '1.5px solid var(--oil-amber)' : '1px solid #e2e8f0',
+                          position: 'relative'
+                        }}
+                      >
                       {/* Depth Interval */}
                       <span style={{ fontFamily: 'monospace', fontSize: '0.76rem', fontWeight: 700, color: '#475569' }}>
                         {col.top_md}m – {col.base_md}m
@@ -994,6 +996,7 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
                     </div>
                   );
                 })}
+                </div>
               </div>
             </div>
           </div>
@@ -1033,7 +1036,7 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
               </div>
 
               {/* 3 Interactive Question Selectors */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.65rem', marginBottom: '10px' }}>
+              <div className="stuck-pipe-selectors-grid" style={{ display: 'grid', gap: '0.65rem', marginBottom: '10px' }}>
                 <div>
                   <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '3px' }}>
                     1. String Motion when Stuck:
@@ -1144,7 +1147,7 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
               </div>
 
               {/* Selector Controls */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '10px' }}>
+              <div className="lcm-selector-grid" style={{ display: 'grid', gap: '0.75rem', marginBottom: '10px' }}>
                 <div>
                   <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#14532d', display: 'block', marginBottom: '3px' }}>
                     Target Pill Volume:
@@ -1190,7 +1193,7 @@ export default function MultiAgentResponseView({ data, onOpenDocument }) {
               </div>
 
               {/* Calculated Results Table */}
-              <div style={{ background: '#ffffff', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '10px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', textAlign: 'center', marginBottom: '8px' }}>
+              <div className="lcm-sacks-summary-grid" style={{ background: '#ffffff', border: '1px solid #bbf7d0', borderRadius: '6px', padding: '10px', display: 'grid', gap: '0.5rem', textAlign: 'center', marginBottom: '8px' }}>
                 <div>
                   <span style={{ fontSize: '0.68rem', color: '#64748b', display: 'block' }}>Coarse Nut Plug:</span>
                   <strong style={{ fontSize: '0.92rem', color: '#166534' }}>{currentLcm.nut_sacks} Sacks</strong>
