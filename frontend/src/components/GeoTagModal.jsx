@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Camera, MapPin, Upload, X, CheckCircle, Navigation, Sparkles } from 'lucide-react';
+import { BACKEND_URL } from '../apiConfig';
 
 export default function GeoTagModal({ isOpen = true, onClose, onResolve, onResolved }) {
   const [lat, setLat] = useState('27.2850');
@@ -40,7 +41,7 @@ export default function GeoTagModal({ isOpen = true, onClose, onResolve, onResol
     setIsUploading(true);
 
     try {
-      const res = await fetch('http://localhost:8001/api/geotag', {
+      const res = await fetch(`${BACKEND_URL}/api/geotag`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({

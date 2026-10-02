@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bot, Send, Sparkles, FileText, User, CornerDownRight } from 'lucide-react';
+import { BACKEND_URL } from '../apiConfig';
 
 export default function PetroBrainChat({ telemetry }) {
   const [messages, setMessages] = useState([
@@ -35,7 +36,7 @@ export default function PetroBrainChat({ telemetry }) {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8001/api/chat", {
+      const res = await fetch(`${BACKEND_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: textToSend })

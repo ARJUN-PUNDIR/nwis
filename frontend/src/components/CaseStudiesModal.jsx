@@ -19,7 +19,7 @@ import {
   DollarSign
 } from 'lucide-react';
 
-const BACKEND_URL = "http://localhost:8001";
+import { BACKEND_URL } from '../apiConfig';
 
 export default function CaseStudiesModal({ isOpen = true, onClose, onSelectCase }) {
   if (!isOpen) return null;

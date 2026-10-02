@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Send, 
-  Paperclip, 
-  Sparkles, 
-  Bot, 
+import {
+  Send,
+  Paperclip,
+  Sparkles,
+  Bot,
   Mic,
   MicOff,
-  Compass, 
-  BookOpen, 
-  Layers, 
-  CheckCircle2, 
+  Compass,
+  BookOpen,
+  Layers,
+  CheckCircle2,
   AlertTriangle,
   Zap,
   Database,
@@ -504,7 +504,7 @@ export default function App() {
   return (
     <div className="app-layout">
       {/* Left Sidebar */}
-      <Sidebar 
+      <Sidebar
         onNewChat={handleNewChat}
         onOpenGeoTag={() => setIsGeoTagOpen(true)}
         onOpenCaseStudies={() => setIsCaseStudiesOpen(true)}
@@ -520,7 +520,7 @@ export default function App() {
         {/* Top Header with Upper Action Buttons */}
         <header className="chat-top-header">
           {/* Interactive Rig Location Selector Button (Point 2) */}
-          <button 
+          <button
             className="header-location-btn"
             onClick={() => setIsLocationModalOpen(true)}
             title="Click to change rig location: current GPS, write custom location, or presets"
@@ -543,7 +543,7 @@ export default function App() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {/* 1. Sources Directory Button */}
-            <button 
+            <button
               className="header-top-btn"
               onClick={() => setIsSourcesOpen(true)}
               title="Verified Statutory & Real-Time Sources Directory"
@@ -553,7 +553,7 @@ export default function App() {
             </button>
 
             {/* 2. Architecture StateGraph Button */}
-            <button 
+            <button
               className="header-top-btn"
               onClick={() => setIsArchitectureOpen(true)}
               title="Multi-Agent StateGraph Architecture (7 Nodes)"
@@ -584,8 +584,8 @@ export default function App() {
               {/* 4 Clean Example Cards */}
               <div className="examples-grid">
                 {examplePrompts.map((item, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className="example-card"
                     onClick={() => handleSendMessage(item.prompt)}
                   >
@@ -613,8 +613,8 @@ export default function App() {
                     </div>
                     <div className="assistant-content" style={{ width: '100%', maxWidth: '920px' }}>
                       {/* Render sih26-style multi-agent response view */}
-                      <MultiAgentResponseView 
-                        data={msg.data || { answer: msg.content }} 
+                      <MultiAgentResponseView
+                        data={msg.data || { answer: msg.content }}
                         onOpenDocument={(doc) => setSelectedDocument(doc)}
                       />
                     </div>
@@ -647,8 +647,8 @@ export default function App() {
         <div className="floating-input-wrapper">
           <div className="floating-input-bar">
             {/* Attachment Button for Geo-Tag Photo */}
-            <button 
-              className="input-icon-btn" 
+            <button
+              className="input-icon-btn"
               onClick={() => setIsGeoTagOpen(true)}
               title="Upload Geo-Tagged Wellsite Photo"
             >
@@ -656,7 +656,7 @@ export default function App() {
             </button>
 
             {/* Microphone Voice Button for Rig Cabin Hands-Free Operation */}
-            <button 
+            <button
               className={`input-icon-btn ${isListening ? 'active' : ''}`}
               onClick={toggleListening}
               style={{ color: isListening ? '#dc2626' : undefined }}
@@ -682,7 +682,7 @@ export default function App() {
             />
 
             {/* Send Button */}
-            <button 
+            <button
               className="send-btn"
               onClick={() => handleSendMessage()}
               disabled={!inputValue.trim() || isLoading}
@@ -700,7 +700,7 @@ export default function App() {
 
       {/* Modals */}
       {isGeoTagOpen && (
-        <GeoTagModal 
+        <GeoTagModal
           isOpen={true}
           onClose={() => setIsGeoTagOpen(false)}
           onResolve={handleGeoTagResolved}
@@ -708,7 +708,7 @@ export default function App() {
       )}
 
       {isCaseStudiesOpen && (
-        <CaseStudiesModal 
+        <CaseStudiesModal
           isOpen={true}
           onClose={() => setIsCaseStudiesOpen(false)}
           onSelectCase={handleSelectCaseStudy}
@@ -716,7 +716,7 @@ export default function App() {
       )}
 
       {isWellGraphOpen && (
-        <WellGraphModal 
+        <WellGraphModal
           isOpen={true}
           onClose={() => setIsWellGraphOpen(false)}
           onConsultWell={(query) => handleSendMessage(query)}
@@ -724,7 +724,7 @@ export default function App() {
       )}
 
       {isSourcesOpen && (
-        <SourcesModal 
+        <SourcesModal
           isOpen={true}
           onClose={() => setIsSourcesOpen(false)}
           onSelectSource={(doc) => setSelectedDocument(doc)}
@@ -732,7 +732,7 @@ export default function App() {
       )}
 
       {isArchitectureOpen && (
-        <ArchitectureModal 
+        <ArchitectureModal
           isOpen={true}
           onClose={() => setIsArchitectureOpen(false)}
         />
@@ -740,7 +740,7 @@ export default function App() {
 
       {/* Rig Location Selector Modal */}
       {isLocationModalOpen && (
-        <LocationModal 
+        <LocationModal
           isOpen={true}
           onClose={() => setIsLocationModalOpen(false)}
           currentLocation={activeLocation}
@@ -751,7 +751,7 @@ export default function App() {
       )}
 
       {selectedDocument && (
-        <DocumentModal 
+        <DocumentModal
           doc={selectedDocument}
           onClose={() => setSelectedDocument(null)}
         />
